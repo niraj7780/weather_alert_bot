@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 
 export default function App() {
-  const [lat, setLat] = useState('30.90'); // Default latitude
-  const [lon, setLon] = useState('75.85'); // Default longitude
+  const [pincode, setPincode] = useState('');
   const [loading, setLoading] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState('');
@@ -16,7 +15,7 @@ export default function App() {
 
     try {
       // Vercel routes `/api/weather` dynamically to our Python backend
-      const backendUrl = `/api/weather?lat=${lat}&lon=${lon}`;
+      const backendUrl = `/api/weather?pincode=${pincode}`;
       
       const response = await fetch(backendUrl);
       if (!response.ok) {
@@ -39,25 +38,14 @@ export default function App() {
       <Text style={styles.header}>Weather Alert App ⛅</Text>
       
       <View style={styles.inputContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Latitude</Text>
+        <View style={styles.singleInputGroup}>
+          <Text style={styles.label}>Pin Code / Zip Code</Text>
           <TextInput
             style={styles.input}
-            value={lat}
-            onChangeText={setLat}
-            keyboardType="numeric"
-            placeholder="e.g. 30.90"
-          />
-        </View>
-        
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Longitude</Text>
-          <TextInput
-            style={styles.input}
-            value={lon}
-            onChangeText={setLon}
-            keyboardType="numeric"
-            placeholder="e.g. 75.85"
+            value={pincode}
+            onChangeText={setPincode}
+            keyboardType="default"
+            placeholder="e.g. 110001 or 90210"
           />
         </View>
       </View>
@@ -75,6 +63,9 @@ export default function App() {
       {weatherData && (
         <View style={styles.card}>
           <Text style={styles.alertText}>{weatherData.alert}</Text>
+          {weatherData.location_name && (
+            <Text style={styles.locationText}>{weatherData.location_name}</Text>
+          )}
           <Text style={styles.subMessage}>{weatherData.sub_message}</Text>
           <View style={styles.statsContainer}>
             <Text style={styles.statText}>Temp: {weatherData.current_temp}°C</Text>
@@ -107,14 +98,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     width: '100%',
     marginBottom: 20,
     maxWidth: 400,
   },
-  inputGroup: {
-    width: '48%',
+  singleInputGroup: {
+    width: '100%',
   },
   label: {
     fontSize: 14,
@@ -173,6 +162,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  locationText: {
+    fontSize: 14,
+    color: '#888',
     marginBottom: 10,
     textAlign: 'center',
   },

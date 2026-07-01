@@ -14,8 +14,30 @@ app.add_middleware(
 )
 
 @app.get("/api/weather")
-def get_weather(lat: float, lon: float):
+def get_weather(pincode: str):
     try:
+        # 1. Convert pincode to latitude and longitude using Nominatim
+        geocode_url = "https://nominatim.openstreetmap.org/search"
+        geocode_params = {
+            "postalcode": pincode,
+            "format": "json",
+            "limit": 1
+        }
+        headers = {
+            "User-Agent": "WeatherAlertBot/1.0"
+        }
+        geo_response = requests.get(geocode_url, params=geocode_params, headers=headers)
+        geo_response.raise_for_status()
+        geo_data = geo_response.json()
+        
+        if not geo_data:
+             raise HTTPException(status_code=404, detail="Could not find location for this pin code")
+             
+        lat = float(geo_data[0]["lat"])
+        lon = float(geo_data[0]["lon"])
+        location_name = geo_data[0].get("display_name", "").split(",")[0]
+
+        # 2. Fetch weather from Open-Meteo
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
             "latitude": lat,
@@ -50,6 +72,7 @@ def get_weather(lat: float, lon: float):
             "theme": theme,
             "current_temp": current_temp,
             "rain_probability": rain_prob,
+            "location_name": location_name
         }
         
     except requests.exceptions.RequestException as e:
