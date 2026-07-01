@@ -1,0 +1,57 @@
+Weather Alert Bot - Setup Instructions
+======================================
+
+Follow these steps to get your Weather Alert Bot up and running!
+
+Step 1: Set up your API Keys & Credentials
+------------------------------------------
+1. OpenWeather API Key:
+   - Go to https://openweathermap.org/ and create a free account.
+   - Navigate to your profile -> My API Keys.
+   - Generate a new key and copy it.
+
+2. Twilio Account (for WhatsApp/SMS):
+   - Go to https://www.twilio.com/ and create a free account.
+   - On your Twilio console dashboard, scroll down to find your Account SID and Auth Token. Copy both.
+   - To set up WhatsApp, go to Messaging -> Try it out -> Send a WhatsApp message.
+   - Follow the instructions to connect your personal WhatsApp to their Sandbox number (e.g., text a code to their number). 
+   - Note the Sandbox phone number and your own registered WhatsApp phone number (with country code, e.g., +1234567890).
+
+Step 2: Configure your .env File
+--------------------------------
+Open the .env file in your editor and paste your credentials. It should look like this:
+
+OPENWEATHER_API_KEY=your_openweathermap_api_key_here
+TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
+TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
+MY_WHATSAPP_NUMBER=+1234567890  # Your phone number with country code
+MY_PHONE_NUMBER=+1234567890     # Your phone number for SMS (if using)
+
+# Optional: You can change your location here (Default is Ludhiana, India)
+MY_LAT=30.900965
+MY_LONG=75.857277
+
+Step 3: Install Dependencies
+----------------------------
+Open a terminal (Powershell or Command Prompt) and run:
+pip install -r requirements.txt
+
+Step 4: Run the Bot
+-------------------
+Test if it works by running the Python script:
+python weather_alert.py
+
+If everything is set up correctly, it will fetch the weather for the next 12 hours.
+If rain is expected, you will receive a WhatsApp alert saying "Bring an umbrella ☔".
+Otherwise, it will tell you "No rain expected today".
+
+Step 5: Automate it with Windows Task Scheduler (Optional)
+----------------------------------------------------------
+To make this run every morning automatically:
+1. Open Task Scheduler in Windows.
+2. Click "Create Basic Task" and name it "Weather Alert Bot".
+3. Trigger: Set it to "Daily" at a time of your choice (e.g., 7:00 AM).
+4. Action: Choose "Start a program".
+5. Program/script: Browse to your Python executable (usually C:\Python39\python.exe).
+6. Add arguments: weather_alert.py
+7. Start in: "c:\Users\niraj.charpe\OneDrive - HCL TECHNOLOGIES LIMITED\Desktop\Weather_Alert_Bot"
